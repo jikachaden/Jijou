@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pour toi 💕</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Nunito:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="page-moments">
+
+    <!-- Décor ambiant -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="hearts-container" id="heartsContainer"></div>
+
+    <a href="index.html" class="back-btn">← Retour</a>
+
+    <!-- ════════════════════════════════════
+         MINI-JEU — Message caché
+         ════════════════════════════════════ -->
+    <div class="game-wrapper" id="gameWrapper">
+
+      <!-- Barre de progression -->
+      <div class="game-progress">
+        <div class="game-progress-bar" id="progressBar"></div>
+      </div>
+
+      <!-- Fragments collectés (apparaissent au fur et à mesure) -->
+      <div class="game-fragments" id="fragmentsDisplay"></div>
+
+      <!-- Zone des étapes (une seule visible à la fois) -->
+      <div class="game-stage" id="gameStage">
+
+        <!-- ─── ÉTAPE 0 : Intro ─── -->
+        <div class="step step-active" data-step="0">
+          <div class="step-icon">💌</div>
+          <h2 class="step-title">Tu es prête à démarrer le jeu ?</h2>
+          <p class="step-text">Un petit défi pour toi…</p>
+          <button class="game-btn" onclick="startGame()">Je suis prête !</button>
+        </div>
+
+        <!-- ─── ÉTAPE 1 : Question date avec zone de texte ─── -->
+        <div class="step" data-step="1">
+          <div class="step-icon">🌸</div>
+          <h2 class="step-title">À quelle date on s'est mis en couple ?</h2>
+          <p class="step-text">Écris la date au format jj/mm/aaaa</p>
+          <div class="date-input-wrap">
+            <input type="text" class="game-input" id="dateInput" placeholder="jj/mm/aaaa" maxlength="10" autocomplete="off">
+            <button class="game-btn" onclick="checkDate()">Valider 💕</button>
+          </div>
+          <p class="error-msg" id="dateError"></p>
+        </div>
+
+        <!-- ─── ÉTAPE 2 : Étoiles ─── -->
+        <div class="step" data-step="2">
+          <div class="step-icon">✨</div>
+          <h2 class="step-title">Dernier effort…</h2>
+          <p class="step-text">Clique sur toutes les étoiles pour libérer le dernier morceau</p>
+          <div class="stars-grid" id="starsGrid">
+            <button class="star-btn" onclick="clickStar(this)">⭐</button>
+            <button class="star-btn" onclick="clickStar(this)">⭐</button>
+            <button class="star-btn" onclick="clickStar(this)">⭐</button>
+            <button class="star-btn" onclick="clickStar(this)">⭐</button>
+            <button class="star-btn" onclick="clickStar(this)">⭐</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ─── RÉVÉLATION FINALE ─── -->
+      <div class="final-reveal" id="finalReveal">
+        <div class="reveal-glow"></div>
+        <div class="reveal-content">
+          <div class="reveal-emoji">💖</div>
+          <p class="reveal-message" id="revealMessage"></p>
+          <div class="reveal-sparkles">✦ ✦ ✦</div>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="footer-text" style="position:relative; z-index:2; margin-top:40px;">fait avec amour ♡</p>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+  /* ═══════════════════════════════════════════════════════
+     MINI-JEU — 3 étapes → "Je t'aime très fort ma Jiji"
+     ═══════════════════════════════════════════════════════ */
+
+  // ════════════════════════════════════════════
+  // 🎯 FRAGMENTS (un par étape)
+  // ════════════════════════════════════════════
+  const FRAGMENTS = ["Je", "t'", "aime"];
+
+  // 🎯 MESSAGE FINAL (affiché à la révélation)
+  const FINAL_MESSAGE = "Je t'aime très fort ma Jiji 💖";
+
+  // 🎯 BONNE RÉPONSE pour la question date
+  const CORRECT_DATE = "28/12/2025";
+
+  let currentStep = 0;
+  let collectedFragments = [];
+  let starsClicked = 0;
+  const totalSteps = FRAGMENTS.length;
+
+  const stage = document.getElementById('gameStage');
+  const progressBar = document.getElementById('progressBar');
+  const fragmentsDisplay = document.getElementById('fragmentsDisplay');
+  const finalReveal = document.getElementById('finalReveal');
+  const revealMessage = document.getElementById('revealMessage');
+
+  /* ─── Utils ─── */
+  function updateProgress() {
+    const pct = (collectedFragments.length / totalSteps) * 100;
+    progressBar.style.width = pct + '%';
+  }
+
+  function addFragment(text) {
+    collectedFragments.push(text);
+
+    const span = document.createElement('span');
+    span.className = 'fragment-word';
+    span.textContent = text;
+    fragmentsDisplay.appendChild(span);
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => span.classList.add('visible'));
+    });
+
+    updateProgress();
+  }
+
+  function goToStep(n) {
+    const active = stage.querySelector('.step-active');
+    if (active) {
+      active.classList.remove('step-active');
+      active.classList.add('step-exit');
+      setTimeout(() => active.classList.remove('step-exit'), 500);
+    }
+
+    if (n > totalSteps - 1 && collectedFragments.length >= totalSteps) {
+      setTimeout(() => triggerReveal(), 600);
+      return;
+    }
+
+    currentStep = n;
+    const next = stage.querySelector(`[data-step="${n}"]`);
+    setTimeout(() => {
+      next.classList.add('step-active');
+    }, 400);
+  }
+
+  function completeStep(stepIndex) {
+    addFragment(FRAGMENTS[stepIndex]);
+    createBurst();
+
+    const nextStep = stepIndex + 1;
+    setTimeout(() => {
+      if (nextStep >= totalSteps) {
+        // Tous les fragments collectés → révélation
+        setTimeout(() => triggerReveal(), 600);
+      } else {
+        goToStep(nextStep);
+      }
+    }, 900);
+  }
+
+  /* ─── Burst de particules ─── */
+  function createBurst() {
+    const emojis = ['💗', '✨', '💕', '🌸', '♡'];
+    for (let i = 0; i < 8; i++) {
+      const p = document.createElement('span');
+      p.className = 'burst-particle';
+      p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      p.style.setProperty('--angle', `${(i / 8) * 360}deg`);
+      p.style.setProperty('--dist', `${60 + Math.random() * 50}px`);
+      document.getElementById('gameWrapper').appendChild(p);
+      setTimeout(() => p.remove(), 1000);
+    }
+  }
+
+  /* ─── Étape 0 : Intro → donne "Je" ─── */
+  function startGame() {
+    completeStep(0);
+  }
+
+  /* ─── Étape 1 : Question date → donne "t'" ─── */
+  function checkDate() {
+    const input = document.getElementById('dateInput');
+    const error = document.getElementById('dateError');
+    const val = input.value.trim();
+
+    if (val === CORRECT_DATE) {
+      input.disabled = true;
+      input.classList.add('input-success');
+      error.textContent = '';
+      completeStep(1);
+    } else {
+      error.textContent = 'Hmm… essaie encore 💭';
+      error.classList.add('shake');
+      input.classList.add('input-error');
+      setTimeout(() => {
+        error.classList.remove('shake');
+        input.classList.remove('input-error');
+      }, 600);
+    }
+  }
+
+  // Permettre la validation avec Entrée
+  document.addEventListener('keydown', (e) => {
+    const input = document.getElementById('dateInput');
+    if (e.key === 'Enter' && input && document.activeElement === input) {
+      checkDate();
+    }
+  });
+
+  /* ─── Étape 2 : Étoiles → donne "aime" ─── */
+  function clickStar(btn) {
+    btn.classList.add('star-clicked');
+    btn.disabled = true;
+    btn.textContent = '✨';
+    starsClicked++;
+
+    if (starsClicked >= 5) {
+      setTimeout(() => {
+        completeStep(2);
+      }, 400);
+    }
+  }
+
+  /* ─── RÉVÉLATION FINALE ─── */
+  function triggerReveal() {
+    stage.style.display = 'none';
+    fragmentsDisplay.style.display = 'none';
+
+    revealMessage.textContent = FINAL_MESSAGE;
+    finalReveal.classList.add('active');
+
+    // Confettis
+    for (let i = 0; i < 30; i++) {
+      setTimeout(() => {
+        const c = document.createElement('span');
+        c.className = 'confetti';
+        c.textContent = ['💖','💕','✨','🌸','♡','💗','🩷'][Math.floor(Math.random()*7)];
+        c.style.left = Math.random() * 100 + '%';
+        c.style.setProperty('--fall-duration', (2 + Math.random() * 3) + 's');
+        c.style.setProperty('--sway', (Math.random() > 0.5 ? '' : '-') + (20 + Math.random()*60) + 'px');
+        document.getElementById('gameWrapper').appendChild(c);
+        setTimeout(() => c.remove(), 5000);
+      }, i * 80);
+    }
+  }
+  </script>
+</body>
+</html>

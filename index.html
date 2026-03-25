@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pour toi 💕</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Nunito:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ════════════════════════════════════
+       HERO SECTION
+       ════════════════════════════════════ -->
+  <section class="hero">
+
+    <!-- Orbes lumineuses flottantes -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <!-- Coeurs flottants (générés en JS) -->
+    <div class="hearts-container" id="heartsContainer"></div>
+
+    <div class="hero-content">
+
+      <!-- ─── Texte de bienvenue ─── -->
+      <div class="welcome-section">
+        <div class="welcome-tag">Tié la clim en plein mois d'août</div>
+        <h1 class="welcome-title">
+          Bienvenue, <span>mon amour</span>
+        </h1>
+        <p class="welcome-sub">Ceci est ta safe place ✦</p>
+      </div>
+
+      <!-- ─── Image + Countdown ─── -->
+      <div class="hero-image-zone">
+
+        <!-- Bulle countdown à gauche -->
+        <div class="countdown-bubble" id="countdownBubble">
+          <div class="countdown-label">💕 Nos 3 mois dans</div>
+          <div class="countdown-timer" id="countdownTimer">
+            <div class="countdown-unit">
+              <span class="countdown-value" id="cdDays">--</span>
+              <span class="countdown-suffix">j</span>
+            </div>
+            <div class="countdown-sep">:</div>
+            <div class="countdown-unit">
+              <span class="countdown-value" id="cdHours">--</span>
+              <span class="countdown-suffix">h</span>
+            </div>
+            <div class="countdown-sep">:</div>
+            <div class="countdown-unit">
+              <span class="countdown-value" id="cdMins">--</span>
+              <span class="countdown-suffix">m</span>
+            </div>
+            <div class="countdown-sep">:</div>
+            <div class="countdown-unit">
+              <span class="countdown-value" id="cdSecs">--</span>
+              <span class="countdown-suffix">s</span>
+            </div>
+          </div>
+          <div class="countdown-date">28 mars 2026 🎉</div>
+        </div>
+
+        <!-- Image -->
+        <div class="image-showcase">
+          <div class="image-ring"></div>
+          <div class="image-frame">
+            <img id="heroImage" src="photo.webp" alt="Pour toi 💕">
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── Carrousel de navigation ─── -->
+      <div class="carousel-wrapper">
+        <div class="carousel-container">
+          <button class="carousel-nav carousel-prev" onclick="prevSlide()" aria-label="Précédent">❮</button>
+          <button class="carousel-nav carousel-next" onclick="nextSlide()" aria-label="Suivant">❯</button>
+
+          <div class="carousel-track" id="carouselTrack">
+
+            <div class="carousel-slide">
+              <a href="pour-toi.html" class="slide-link">
+                <div class="slide-icon">💕</div>
+                <h2 class="slide-title">Pour toi</h2>
+              </a>
+              <div class="slide-divider"></div>
+              <p class="slide-text">
+                Il est l'heure de jouer 🎮
+              </p>
+            </div>
+
+            <div class="carousel-slide">
+              <a href="nos-moments.html" class="slide-link">
+                <div class="slide-icon">🌸</div>
+                <h2 class="slide-title">Nos moments</h2>
+              </a>
+              <div class="slide-divider"></div>
+              <p class="slide-text">
+                Ici, tu pourras retrouver un mini album photo <br>
+                
+              </p>
+            </div>
+
+            <div class="carousel-slide">
+              <a href="un-secret.html" class="slide-link">
+                <div class="slide-icon">💌</div>
+                <h2 class="slide-title">Un secret</h2>
+              </a>
+              <div class="slide-divider"></div>
+              <p class="slide-text">
+                Je crois bien que tu as reçu un petit message Jijou 😉
+              </p>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="carousel-dots" id="carouselDots"></div>
+        <div class="carousel-pills" id="carouselPills"></div>
+      </div>
+
+      <p class="footer-text"></p>
+
+    </div>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>

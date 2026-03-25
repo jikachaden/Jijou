@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory 🧠</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Nunito:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="page-moments">
+
+    <!-- Décor ambiant -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="hearts-container" id="heartsContainer"></div>
+
+    <a href="index.html" class="back-btn">← Retour</a>
+
+    <!-- ════════════════════════════════════
+         MEMORY GAME
+         ════════════════════════════════════ -->
+    <div class="memory-wrapper">
+
+      <!-- En-tête -->
+      <div class="memory-header">
+        <div class="welcome-tag">un petit défi</div>
+        <h1 class="welcome-title">
+          Memory <span>Game</span>
+        </h1>
+        <p class="welcome-sub">Retrouve toutes les paires 💕</p>
+      </div>
+
+      <!-- Stats -->
+      <div class="memory-stats">
+        <div class="stat-box">
+          <span class="stat-label">Coups</span>
+          <span class="stat-value" id="moveCount">0</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Paires</span>
+          <span class="stat-value"><span id="pairCount">0</span> / <span id="totalPairs">0</span></span>
+        </div>
+        <button class="game-btn memory-restart" id="restartBtn">🔄 Rejouer</button>
+      </div>
+
+      <!-- Grille de cartes -->
+      <div class="memory-grid" id="memoryGrid"></div>
+
+      <!-- Message de victoire -->
+      <div class="memory-win" id="memoryWin">
+        <div class="win-content">
+          <div class="win-emoji">🎉</div>
+          <h2 class="win-title">Bravo ma Jiji !</h2>
+          <p class="win-text">Tu as trouvé toutes les paires en <strong id="winMoves">0</strong> coups 💖</p>
+          <button class="game-btn" id="winRestartBtn">Rejouer 🔄</button>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="footer-text" style="position:relative; z-index:2; margin-top:40px;">fait avec amour ♡</p>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+  /* ═══════════════════════════════════════════════════════
+     MEMORY GAME — Logique
+     ═══════════════════════════════════════════════════════ */
+
+  // ════════════════════════════════════════════
+  // 🎯 CARTES DU JEU
+  // type: 'emoji' → affiche l'emoji
+  // type: 'photo' → affiche une image (remplace src par tes photos)
+  // Chaque entrée = 1 paire (sera dupliquée automatiquement)
+  // ════════════════════════════════════════════
+  const CARD_DATA = [
+    { type: 'emoji', value: '💕', label: 'Amour' },
+    { type: 'emoji', value: '🌸', label: 'Fleur' },
+    { type: 'emoji', value: '🧸', label: 'Nounours' },
+    { type: 'photo', value: 'date13.JPG', label: 'Photo 1' },
+    { type: 'photo', value: 'nous1.jpeg', label: 'Photo 2' },
+    { type: 'photo', value: 'date23.JPG', label: 'Photo 3' },
+  ];
+
+  const grid = document.getElementById('memoryGrid');
+  const moveCountEl = document.getElementById('moveCount');
+  const pairCountEl = document.getElementById('pairCount');
+  const totalPairsEl = document.getElementById('totalPairs');
+  const winScreen = document.getElementById('memoryWin');
+  const winMovesEl = document.getElementById('winMoves');
+  const restartBtn = document.getElementById('restartBtn');
+  const winRestartBtn = document.getElementById('winRestartBtn');
+
+  let cards = [];
+  let flippedCards = [];
+  let matchedPairs = 0;
+  let moves = 0;
+  let locked = false;
+
+  /* ─── Mélanger un tableau ─── */
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  /* ─── Créer le jeu ─── */
+  function initGame() {
+    // Reset
+    grid.innerHTML = '';
+    flippedCards = [];
+    matchedPairs = 0;
+    moves = 0;
+    locked = false;
+    moveCountEl.textContent = '0';
+    pairCountEl.textContent = '0';
+    totalPairsEl.textContent = CARD_DATA.length;
+    winScreen.classList.remove('active');
+
+    // Dupliquer + mélanger
+    cards = shuffle([...CARD_DATA, ...CARD_DATA].map((card, i) => ({ ...card, id: i })));
+
+    // Créer les éléments
+    cards.forEach((card, index) => {
+      const el = document.createElement('div');
+      el.className = 'memory-card';
+      el.dataset.index = index;
+      el.dataset.label = card.label;
+
+      el.innerHTML = `
+        <div class="card-inner">
+          <div class="card-front">💗</div>
+          <div class="card-back">
+            ${card.type === 'emoji'
+              ? `<span class="card-emoji">${card.value}</span>`
+              : `<img class="card-photo" src="${card.value}" alt="${card.label}">`
+            }
+          </div>
+        </div>
+      `;
+
+      el.addEventListener('click', () => flipCard(el, index));
+
+      // Animation d'entrée décalée
+      el.style.opacity = '0';
+      el.style.transform = 'scale(0.8) rotateY(10deg)';
+      el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+      setTimeout(() => {
+        el.style.opacity = '1';
+        el.style.transform = 'scale(1) rotateY(0deg)';
+      }, 80 + index * 50);
+
+      grid.appendChild(el);
+    });
+  }
+
+  /* ─── Retourner une carte ─── */
+  function flipCard(el, index) {
+    if (locked) return;
+    if (el.classList.contains('flipped') || el.classList.contains('matched')) return;
+    if (flippedCards.length >= 2) return;
+
+    el.classList.add('flipped');
+    flippedCards.push({ el, index, label: cards[index].label });
+
+    if (flippedCards.length === 2) {
+      moves++;
+      moveCountEl.textContent = moves;
+      checkMatch();
+    }
+  }
+
+  /* ─── Vérifier la paire ─── */
+  function checkMatch() {
+    const [a, b] = flippedCards;
+
+    if (a.label === b.label) {
+      // Paire trouvée !
+      a.el.classList.add('matched');
+      b.el.classList.add('matched');
+      matchedPairs++;
+      pairCountEl.textContent = matchedPairs;
+      flippedCards = [];
+
+      // Burst
+      createMemoryBurst(a.el);
+      createMemoryBurst(b.el);
+
+      // Victoire ?
+      if (matchedPairs === CARD_DATA.length) {
+        setTimeout(() => triggerWin(), 800);
+      }
+    } else {
+      // Pas de match → retourner
+      locked = true;
+      setTimeout(() => {
+        a.el.classList.remove('flipped');
+        b.el.classList.remove('flipped');
+        flippedCards = [];
+        locked = false;
+      }, 900);
+    }
+  }
+
+  /* ─── Burst sur une carte matchée ─── */
+  function createMemoryBurst(el) {
+    const rect = el.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const emojis = ['💗', '✨', '💕', '🌸'];
+
+    for (let i = 0; i < 6; i++) {
+      const p = document.createElement('span');
+      p.className = 'burst-particle';
+      p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      p.style.left = cx + 'px';
+      p.style.top = cy + 'px';
+      p.style.position = 'fixed';
+      p.style.setProperty('--angle', `${(i / 6) * 360}deg`);
+      p.style.setProperty('--dist', `${40 + Math.random() * 40}px`);
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 1000);
+    }
+  }
+
+  /* ─── Écran de victoire ─── */
+  function triggerWin() {
+    winMovesEl.textContent = moves;
+    winScreen.classList.add('active');
+
+    // Confettis
+    for (let i = 0; i < 25; i++) {
+      setTimeout(() => {
+        const c = document.createElement('span');
+        c.className = 'confetti';
+        c.textContent = ['💖','💕','✨','🌸','♡','💗','🩷','🎉'][Math.floor(Math.random()*8)];
+        c.style.left = Math.random() * 100 + '%';
+        c.style.setProperty('--fall-duration', (2 + Math.random() * 3) + 's');
+        c.style.setProperty('--sway', (Math.random() > 0.5 ? '' : '-') + (20 + Math.random()*60) + 'px');
+        document.querySelector('.memory-wrapper').appendChild(c);
+        setTimeout(() => c.remove(), 5000);
+      }, i * 90);
+    }
+  }
+
+  /* ─── Restart ─── */
+  restartBtn.addEventListener('click', initGame);
+  winRestartBtn.addEventListener('click', initGame);
+
+  // Lancer le jeu
+  initGame();
+  </script>
+</body>
+</html>

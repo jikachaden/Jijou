@@ -119,6 +119,9 @@ if (cdDays) {
       if (label) label.textContent = '💕 Joyeux 3 mois !';
       const sep = document.querySelectorAll('.countdown-sep');
       sep.forEach(s => s.style.display = 'none');
+
+      // 🎉 Confettis à chaque visite !
+      launchCountdownConfetti();
       return;
     }
 
@@ -145,6 +148,27 @@ if (cdDays) {
 
   updateCountdown();
   setInterval(updateCountdown, 1000);
+}
+
+/* ─────────────────────────────────────
+   CONFETTIS COUNTDOWN — Se lance quand le compte à rebours est à 0
+   ───────────────────────────────────── */
+function launchCountdownConfetti() {
+  const container = document.querySelector('.hero') || document.body;
+  const emojis = ['💖', '💕', '✨', '🌸', '♡', '💗', '🩷', '🎉', '🥳', '🎊'];
+
+  for (let i = 0; i < 40; i++) {
+    setTimeout(() => {
+      const c = document.createElement('span');
+      c.className = 'confetti';
+      c.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      c.style.left = Math.random() * 100 + '%';
+      c.style.setProperty('--fall-duration', (2.5 + Math.random() * 3.5) + 's');
+      c.style.setProperty('--sway', (Math.random() > 0.5 ? '' : '-') + (20 + Math.random() * 80) + 'px');
+      container.appendChild(c);
+      setTimeout(() => c.remove(), 6000);
+    }, i * 70);
+  }
 }
 
 

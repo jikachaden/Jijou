@@ -14,7 +14,7 @@ if (track) {
   const dotsContainer = document.getElementById('carouselDots');
   const pillsContainer = document.getElementById('carouselPills');
 
-  const slideNames = ['💕 Pour toi', '🌸 Moments', '💌 Secret', '🧠 Memory'];
+  const slideNames = ['💕 Pour toi', '🌸 Moments', '💌 Secret', '🧠 Memory', '🔮 Capsule', '🎰 Cash'];
   let current = 0;
   let autoplay;
 

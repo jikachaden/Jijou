@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Capsule temporelle 🔮</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Nunito:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="page-moments">
+
+    <!-- Décor ambiant -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="hearts-container" id="heartsContainer"></div>
+
+    <a href="index.html" class="back-btn">← Retour</a>
+
+    <!-- ════════════════════════════════════
+         CAPSULE TEMPORELLE
+         ════════════════════════════════════ -->
+    <div class="capsule-wrapper">
+
+      <!-- ─── État VERROUILLÉ ─── -->
+      <div class="capsule-locked" id="capsuleLocked">
+
+        <div class="capsule-orb">
+          <div class="capsule-orb-glow"></div>
+          <div class="capsule-orb-icon">🔒</div>
+        </div>
+
+        <div class="capsule-header">
+          <div class="welcome-tag">capsule temporelle</div>
+          <h1 class="welcome-title">
+            Un message <span>du passé</span>
+          </h1>
+          <p class="capsule-sub">
+            Ton amoureux t'a écrit quelque chose…<br>
+            mais il faudra patienter pour le lire.
+          </p>
+        </div>
+
+        <!-- Countdown vers la date d'ouverture -->
+        <div class="capsule-countdown">
+          <div class="capsule-cd-label">Se déverrouille dans</div>
+          <div class="capsule-cd-timer">
+            <div class="capsule-cd-unit">
+              <span class="capsule-cd-value" id="capDays">--</span>
+              <span class="capsule-cd-suffix">jours</span>
+            </div>
+            <div class="capsule-cd-unit">
+              <span class="capsule-cd-value" id="capHours">--</span>
+              <span class="capsule-cd-suffix">heures</span>
+            </div>
+            <div class="capsule-cd-unit">
+              <span class="capsule-cd-value" id="capMins">--</span>
+              <span class="capsule-cd-suffix">min</span>
+            </div>
+            <div class="capsule-cd-unit">
+              <span class="capsule-cd-value" id="capSecs">--</span>
+              <span class="capsule-cd-suffix">sec</span>
+            </div>
+          </div>
+          <div class="capsule-cd-date">📅 28 juin 2026 — Nos 6 mois 💕</div>
+        </div>
+
+        <p class="capsule-tease">Patience ma Jiji… ça vaut le coup d'attendre ✦</p>
+
+      </div>
+
+      <!-- ─── État DÉVERROUILLÉ ─── -->
+      <div class="capsule-unlocked" id="capsuleUnlocked">
+
+        <div class="capsule-orb">
+          <div class="capsule-orb-glow capsule-orb-glow-open"></div>
+          <div class="capsule-orb-icon">💌</div>
+        </div>
+
+        <div class="capsule-header">
+          <div class="welcome-tag">capsule ouverte</div>
+          <h1 class="welcome-title">
+            Un message <span>pour toi</span>
+          </h1>
+        </div>
+
+        <div class="capsule-letter">
+          <div class="letter-paper">
+            <div class="letter-header">
+              <span class="letter-tag">Écrit le 28 mars 2026 💕</span>
+            </div>
+
+            <div class="capsule-message">
+              <!-- ════════════════════════════════════════════
+                   🎯 MODIFIE TON MESSAGE ICI
+                   ════════════════════════════════════════════ -->
+              <p>Ma Jiji,</p>
+              <p>
+                Si tu lis ça, c'est qu'on a atteint nos 6 mois ensemble.
+                Quand j'ai écrit ces mots, on venait de fêter nos 3 mois
+                et je savais déjà que ce qu'on vit est spécial.
+              </p>
+              <p>
+                J'espère que ces 3 derniers mois ont été aussi beaux
+                que les premiers. J'espère qu'on a ri, qu'on a voyagé,
+                qu'on a créé encore plus de souvenirs.
+              </p>
+              <p>
+                Et si jamais il y a eu des jours difficiles,
+                sache que même en écrivant ces mots à l'avance,
+                je sais que je t'aime et que rien ne changera ça.
+              </p>
+              <p>
+                Joyeux 6 mois mon amour. 💖
+              </p>
+            </div>
+
+            <div class="letter-signature visible" style="opacity:1; transform:none;">
+              — Ton amoureux, depuis le passé ♡
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <p class="footer-text" style="position:relative; z-index:2; margin-top:40px;">fait avec amour ♡</p>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+  /* ═══════════════════════════════════════════════════════
+     CAPSULE TEMPORELLE — Logique
+     ═══════════════════════════════════════════════════════ */
+
+  // ════════════════════════════════════════════
+  // 🎯 DATE D'OUVERTURE (modifie ici)
+  // Mois 0-indexé : 5 = juin
+  // ════════════════════════════════════════════
+  const UNLOCK_DATE = new Date(2026, 5, 28, 0, 0, 0); // 28 juin 2026
+
+  const lockedEl = document.getElementById('capsuleLocked');
+  const unlockedEl = document.getElementById('capsuleUnlocked');
+  const capDays = document.getElementById('capDays');
+  const capHours = document.getElementById('capHours');
+  const capMins = document.getElementById('capMins');
+  const capSecs = document.getElementById('capSecs');
+
+  function checkCapsule() {
+    const now = new Date();
+    const diff = UNLOCK_DATE - now;
+
+    if (diff <= 0) {
+      // DÉVERROUILLÉ !
+      lockedEl.style.display = 'none';
+      unlockedEl.style.display = 'flex';
+      unlockedEl.classList.add('capsule-reveal');
+
+      // Confettis
+      for (let i = 0; i < 25; i++) {
+        setTimeout(() => {
+          const c = document.createElement('span');
+          c.className = 'confetti';
+          c.textContent = ['💖','💕','✨','🌸','♡','💗','🩷','🔮'][Math.floor(Math.random()*8)];
+          c.style.left = Math.random() * 100 + '%';
+          c.style.setProperty('--fall-duration', (2 + Math.random() * 3) + 's');
+          c.style.setProperty('--sway', (Math.random() > 0.5 ? '' : '-') + (20 + Math.random()*60) + 'px');
+          document.querySelector('.capsule-wrapper').appendChild(c);
+          setTimeout(() => c.remove(), 5000);
+        }, i * 100);
+      }
+      return;
+    }
+
+    // Encore verrouillé → afficher le countdown
+    lockedEl.style.display = 'flex';
+    unlockedEl.style.display = 'none';
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const mins = Math.floor((diff / (1000 * 60)) % 60);
+    const secs = Math.floor((diff / 1000) % 60);
+
+    capDays.textContent = String(days).padStart(2, '0');
+    capHours.textContent = String(hours).padStart(2, '0');
+    capMins.textContent = String(mins).padStart(2, '0');
+    capSecs.textContent = String(secs).padStart(2, '0');
+  }
+
+  checkCapsule();
+  setInterval(checkCapsule, 1000);
+  </script>
+</body>
+</html>

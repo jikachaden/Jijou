@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cash 🎰</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Nunito:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="page-moments">
+
+    <!-- Décor ambiant -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="hearts-container" id="heartsContainer"></div>
+
+    <a href="index.html" class="back-btn">← Retour</a>
+
+    <!-- ════════════════════════════════════
+         CASH — Tickets à gratter
+         ════════════════════════════════════ -->
+    <div class="cash-wrapper" id="cashWrapper">
+
+      <!-- Image bulle déco -->
+      <div class="cash-image-deco">
+        <div class="image-showcase">
+          <div class="image-ring"></div>
+          <div class="image-frame">
+            <img src="Yumeko.png" alt="Yumeko 🎰">
+          </div>
+        </div>
+      </div>
+
+      <div class="cash-header">
+        <div class="welcome-tag">tente ta chance</div>
+        <h1 class="welcome-title">
+          Cash <span>à gratter</span>
+        </h1>
+        <p class="welcome-sub">3 tickets, gratte les cases et trouve des cœurs ✦</p>
+      </div>
+
+      <!-- Légende des lots -->
+      <div class="cash-legend">
+        <div class="legend-item">
+          <span class="legend-hearts">❤️x3</span>
+          <span class="legend-text">Moelleux / Balisto / Fleur origami</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-hearts">❤️×5</span>
+          <span class="legend-text">Carnet de l'apothicaire</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-hearts">❤️×8</span>
+          <span class="legend-text">Sonny Angel</span>
+        </div>
+      </div>
+
+      <!-- Navigation tickets -->
+      <div class="ticket-tabs">
+        <button class="ticket-tab active" id="tab0" onclick="switchTicket(0)">Ticket 1</button>
+        <button class="ticket-tab" id="tab1" onclick="switchTicket(1)">Ticket 2</button>
+        <button class="ticket-tab locked" id="tab2" onclick="switchTicket(2)">Ticket 3 🔒</button>
+      </div>
+
+      <!-- Zone du ticket actif -->
+      <div class="ticket-zone" id="ticketZone">
+        <!-- Généré en JS -->
+      </div>
+
+      <!-- Compteur de cœurs -->
+      <div class="heart-counter">
+        <span class="heart-counter-label">Cœurs trouvés :</span>
+        <span class="heart-counter-value" id="heartCount">0</span>
+      </div>
+
+      <!-- Résultat -->
+      <div class="ticket-result" id="ticketResult"></div>
+
+      <!-- Récap final (apparaît quand les 3 tickets sont grattés) -->
+      <div class="cash-recap" id="cashRecap"></div>
+
+    </div>
+
+    <!-- Écran de victoire -->
+    <div class="cash-win-screen" id="cashWinScreen">
+      <div class="reveal-glow"></div>
+      <div class="reveal-content">
+        <div class="reveal-emoji">🎉</div>
+        <h2 class="win-title" id="cashWinTitle">Bravo !</h2>
+        <p class="win-text" id="cashWinText"></p>
+        <button class="game-btn" onclick="closeCashWin()">Fermer 💕</button>
+      </div>
+    </div>
+
+    <p class="footer-text" style="position:relative; z-index:2; margin-top:40px;"></p>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+  /* ═══════════════════════════════════════════════════════
+     CASH — Tickets à gratter
+     ═══════════════════════════════════════════════════════ */
+
+  // ════════════════════════════════════════════
+  // 🎯 CONFIG
+  // ════════════════════════════════════════════
+  const TOTAL_CELLS = 20; // 5x4
+
+  // Lots basic (tiré au hasard parmi les 3)
+  const LOTS_BASIC = ['🍫 Moelleux au chocolat', '🍫 Paquet de Balisto', '🌸 Fleur en origami'];
+
+  // Probabilités SI le ticket est gagnant :
+  // 65% basic, 25% moyen, 10% gros lot
+  const LOT_TIERS = [
+    { chance: 0.65, hearts: 3, getLabel: () => LOTS_BASIC[Math.floor(Math.random() * LOTS_BASIC.length)] },
+    { chance: 0.25, hearts: 5, getLabel: () => '📖 Carnet de l\'apothicaire' },
+    { chance: 0.10, hearts: 8, getLabel: () => '👼 Sonny Angel' },
+  ];
+
+  const TICKET_COUNT = 3;
+  let tickets = [];        // tableau de { cells: [...], isWinner, lot }
+  let currentTicket = 0;
+  let ticketsScratched = [false, false, false];
+  let ticketsResults = [null, null, null];
+
+  /* ─── Tirer un lot selon les probas ─── */
+  function pickLot() {
+    const roll = Math.random();
+    let cumul = 0;
+    for (const tier of LOT_TIERS) {
+      cumul += tier.chance;
+      if (roll < cumul) return tier;
+    }
+    return LOT_TIERS[0]; // fallback basic
+  }
+
+  /* ─── Générer un ticket ─── */
+  function generateTicket(isGuaranteedWin) {
+    const cells = new Array(TOTAL_CELLS).fill(false);
+    let isWinner = isGuaranteedWin || (Math.random() < 0.3);
+    let lot = null;
+
+    if (isWinner) {
+      // Tirer le lot
+      const tier = pickLot();
+      lot = { label: tier.getLabel(), hearts: tier.hearts };
+
+      // Placer exactement le bon nombre de cœurs
+      const indices = [];
+      while (indices.length < tier.hearts) {
+        const r = Math.floor(Math.random() * TOTAL_CELLS);
+        if (!indices.includes(r)) indices.push(r);
+      }
+      indices.forEach(i => cells[i] = true);
+    } else {
+      // Perdant : 0 à 2 cœurs
+      const heartCount = Math.floor(Math.random() * 3);
+      const indices = [];
+      while (indices.length < heartCount) {
+        const r = Math.floor(Math.random() * TOTAL_CELLS);
+        if (!indices.includes(r)) indices.push(r);
+      }
+      indices.forEach(i => cells[i] = true);
+    }
+
+    return { cells, isWinner, lot };
+  }
+
+  /* ─── Init les 3 tickets ─── */
+  function initTickets() {
+    tickets = [
+      generateTicket(false),   // Ticket 1 : 30%
+      generateTicket(false),   // Ticket 2 : 30%
+      generateTicket(true),    // Ticket 3 : garanti
+    ];
+    ticketsScratched = [false, false, false];
+    ticketsResults = [null, null, null];
+    currentTicket = 0;
+
+    document.querySelectorAll('.ticket-tab').forEach((tab, i) => {
+      tab.classList.remove('active', 'done', 'winner', 'loser');
+      if (i === 0) tab.classList.add('active');
+      if (i === 2) tab.classList.add('locked');
+    });
+
+    renderTicket(0);
+    document.getElementById('heartCount').textContent = '0';
+    document.getElementById('ticketResult').innerHTML = '';
+  }
+
+  /* ─── Afficher un ticket ─── */
+  function renderTicket(index) {
+    const zone = document.getElementById('ticketZone');
+    zone.innerHTML = '';
+
+    const grid = document.createElement('div');
+    grid.className = 'scratch-grid';
+    const ticketData = tickets[index];
+
+    ticketData.cells.forEach((isHeart, i) => {
+      const cell = document.createElement('div');
+      cell.className = 'scratch-cell';
+
+      if (ticketsScratched[index]) {
+        cell.classList.add('scratched');
+        cell.innerHTML = isHeart
+          ? '<span class="cell-heart">❤️</span>'
+          : '<span class="cell-cross">✕</span>';
+      } else {
+        cell.innerHTML = `
+          <div class="cell-content">${isHeart ? '<span class="cell-heart">❤️</span>' : '<span class="cell-cross">✕</span>'}</div>
+          <div class="cell-scratch" data-cell="${i}" data-ticket="${index}">
+            <span class="scratch-icon">✦</span>
+          </div>
+        `;
+
+        const scratchLayer = cell.querySelector('.cell-scratch');
+        scratchLayer.addEventListener('click', () => scratchCell(scratchLayer, cell, index));
+        scratchLayer.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          scratchCell(scratchLayer, cell, index);
+        }, { passive: false });
+      }
+
+      cell.style.opacity = '0';
+      cell.style.transform = 'scale(0.85)';
+      setTimeout(() => {
+        cell.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        cell.style.opacity = '1';
+        cell.style.transform = 'scale(1)';
+      }, 30 + i * 25);
+
+      grid.appendChild(cell);
+    });
+
+    zone.appendChild(grid);
+  }
+
+  /* ─── Gratter une case ─── */
+  function scratchCell(scratchLayer, cell, ticketIndex) {
+    if (scratchLayer.classList.contains('gone')) return;
+
+    scratchLayer.classList.add('gone');
+    cell.classList.add('scratched');
+
+    const cellIdx = parseInt(scratchLayer.dataset.cell);
+    if (tickets[ticketIndex].cells[cellIdx]) {
+      createScratchBurst(cell);
+    }
+
+    // Compter les cœurs révélés
+    const gone = document.querySelectorAll('.cell-scratch.gone');
+    let hearts = 0;
+    gone.forEach(s => {
+      if (tickets[ticketIndex].cells[parseInt(s.dataset.cell)]) hearts++;
+    });
+    document.getElementById('heartCount').textContent = hearts;
+
+    // Toutes les cases grattées ?
+    const remaining = document.querySelectorAll('.cell-scratch:not(.gone)');
+    if (remaining.length === 0) {
+      ticketsScratched[ticketIndex] = true;
+      const totalHearts = tickets[ticketIndex].cells.filter(h => h).length;
+      setTimeout(() => evaluateTicket(ticketIndex, totalHearts), 500);
+    }
+  }
+
+  /* ─── Évaluer le résultat ─── */
+  function evaluateTicket(ticketIndex, hearts) {
+    const resultEl = document.getElementById('ticketResult');
+    const tab = document.getElementById('tab' + ticketIndex);
+    const ticketData = tickets[ticketIndex];
+
+    tab.classList.remove('active', 'locked');
+    tab.classList.add('done');
+
+    if (ticketData.isWinner && ticketData.lot) {
+      tab.classList.add('winner');
+      ticketsResults[ticketIndex] = { hearts, won: true, lotLabel: ticketData.lot.label };
+      resultEl.innerHTML = `<div class="result-win">🎉 ${hearts} cœurs — Tu as gagné : <strong>${ticketData.lot.label}</strong></div>`;
+      setTimeout(() => showCashWin(ticketData.lot.label, hearts), 600);
+    } else {
+      tab.classList.add('loser');
+      ticketsResults[ticketIndex] = { hearts, won: false };
+      resultEl.innerHTML = `<div class="result-lose">😢 ${hearts} cœur${hearts > 1 ? 's' : ''} — Pas de lot cette fois…</div>`;
+    }
+
+    // Débloquer le suivant
+    if (ticketIndex < TICKET_COUNT - 1) {
+      document.getElementById('tab' + (ticketIndex + 1)).classList.remove('locked');
+
+      // Afficher le bouton "Passer au ticket suivant"
+      const nextIdx = ticketIndex + 1;
+      const nextBtnHtml = `<div class="next-ticket-wrap">
+        <p class="next-ticket-text">Passer au ticket suivant</p>
+        <button class="game-btn next-ticket-btn" onclick="goToNextTicket(${nextIdx})">OK 💕</button>
+      </div>`;
+      resultEl.innerHTML += nextBtnHtml;
+    }
+
+    // Vérifier si les 3 tickets sont grattés → afficher le récap
+    if (ticketsScratched.every(s => s)) {
+      setTimeout(() => showRecap(), 1200);
+    }
+  }
+
+  /* ─── Récapitulatif final ─── */
+  function showRecap() {
+    const recapEl = document.getElementById('cashRecap');
+    const wins = ticketsResults.filter(r => r && r.won);
+
+    let html = '<div class="recap-card">';
+    html += '<div class="recap-title">📋 Récapitulatif</div>';
+    html += '<div class="recap-divider"></div>';
+
+    if (wins.length === 0) {
+      html += '<p class="recap-text">Pas de lot cette fois… Mais t\'es toujours mon gros lot à moi 💖</p>';
+    } else {
+      html += '<p class="recap-text">Tu as gagné <strong>' + wins.length + ' lot' + (wins.length > 1 ? 's' : '') + '</strong> :</p>';
+      html += '<div class="recap-lots">';
+      wins.forEach((r, i) => {
+        html += '<div class="recap-lot-item">';
+        html += '<span class="recap-lot-num">Ticket ' + (ticketsResults.indexOf(r) + 1) + '</span>';
+        html += '<span class="recap-lot-name">' + r.lotLabel + '</span>';
+        html += '</div>';
+      });
+      html += '</div>';
+      html += '<p class="recap-footer-text">Bravo Jiji ! 🎉💕</p>';
+    }
+
+    html += '</div>';
+    recapEl.innerHTML = html;
+    recapEl.classList.add('visible');
+  }
+
+  /* ─── Bouton "Passer au ticket suivant" ─── */
+  function goToNextTicket(index) {
+    // Fermer l'écran de victoire si ouvert
+    closeCashWin();
+    // Passer au ticket
+    switchTicket(index);
+  }
+
+  /* ─── Changer de ticket ─── */
+  function switchTicket(index) {
+    const tab = document.getElementById('tab' + index);
+    if (tab.classList.contains('locked')) return;
+    if (!ticketsScratched[currentTicket] && index !== currentTicket && !ticketsScratched[index]) return;
+
+    currentTicket = index;
+    document.querySelectorAll('.ticket-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+
+    renderTicket(index);
+
+    const resultEl = document.getElementById('ticketResult');
+    if (ticketsResults[index]) {
+      const r = ticketsResults[index];
+      if (r.won) {
+        resultEl.innerHTML = `<div class="result-win">🎉 ${r.hearts} cœurs — Tu as gagné : <strong>${r.lotLabel}</strong></div>`;
+      } else {
+        resultEl.innerHTML = `<div class="result-lose">😢 ${r.hearts} cœur${r.hearts > 1 ? 's' : ''} — Pas de lot</div>`;
+      }
+      document.getElementById('heartCount').textContent = r.hearts;
+    } else {
+      resultEl.innerHTML = '';
+      document.getElementById('heartCount').textContent = '0';
+    }
+  }
+
+  /* ─── Burst visuel ─── */
+  function createScratchBurst(cell) {
+    const rect = cell.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+
+    for (let i = 0; i < 5; i++) {
+      const p = document.createElement('span');
+      p.className = 'burst-particle';
+      p.textContent = ['❤️', '✨', '💕'][Math.floor(Math.random() * 3)];
+      p.style.left = cx + 'px';
+      p.style.top = cy + 'px';
+      p.style.position = 'fixed';
+      p.style.setProperty('--angle', `${(i / 5) * 360}deg`);
+      p.style.setProperty('--dist', `${30 + Math.random() * 30}px`);
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 800);
+    }
+  }
+
+  /* ─── Écran de victoire ─── */
+  function showCashWin(lot, hearts) {
+    document.getElementById('cashWinTitle').textContent = 'Bravo Jiji ! 🎉';
+    document.getElementById('cashWinText').innerHTML = `Tu as gagné :<br><br><strong>${lot}</strong>`;
+    document.getElementById('cashWinScreen').classList.add('active');
+
+    for (let i = 0; i < 25; i++) {
+      setTimeout(() => {
+        const c = document.createElement('span');
+        c.className = 'confetti';
+        c.textContent = ['💖','💕','✨','🎉','♡','💗','🩷','🎁'][Math.floor(Math.random()*8)];
+        c.style.left = Math.random() * 100 + '%';
+        c.style.setProperty('--fall-duration', (2 + Math.random() * 3) + 's');
+        c.style.setProperty('--sway', (Math.random() > 0.5 ? '' : '-') + (20 + Math.random()*60) + 'px');
+        document.getElementById('cashWrapper').appendChild(c);
+        setTimeout(() => c.remove(), 5000);
+      }, i * 90);
+    }
+  }
+
+  function closeCashWin() {
+    document.getElementById('cashWinScreen').classList.remove('active');
+  }
+
+  // Init
+  initTickets();
+  </script>
+</body>
+</html>

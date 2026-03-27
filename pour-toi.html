@@ -12,7 +12,7 @@
 
   <div class="page-moments">
 
-    <!-- Décor ambiant -->
+    
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
@@ -20,9 +20,9 @@
 
     <a href="index.html" class="back-btn">← Retour</a>
 
-    <!-- ════════════════════════════════════
+    <!--
          MINI-JEU — Message caché
-         ════════════════════════════════════ -->
+          -->
     <div class="game-wrapper" id="gameWrapper">
 
       <!-- Barre de progression -->
@@ -84,18 +84,18 @@
 
     </div>
 
-    <p class="footer-text" style="position:relative; z-index:2; margin-top:40px;">fait avec amour ♡</p>
+    <p class="footer-text" style="position:relative; z-index:2; margin-top:40px;"></p>
   </div>
 
   <script src="script.js"></script>
   <script>
-  /* ═══════════════════════════════════════════════════════
+  /* 
      MINI-JEU — 3 étapes → "Je t'aime très fort ma Jiji"
-     ═══════════════════════════════════════════════════════ */
+    */
 
-  // ════════════════════════════════════════════
+  // 
   // 🎯 FRAGMENTS (un par étape)
-  // ════════════════════════════════════════════
+  //
   const FRAGMENTS = ["Je", "t'", "aime"];
 
   // 🎯 MESSAGE FINAL (affiché à la révélation)
@@ -171,7 +171,7 @@
     }, 900);
   }
 
-  /* ─── Burst de particules ─── */
+  /* Burst de particules  */
   function createBurst() {
     const emojis = ['💗', '✨', '💕', '🌸', '♡'];
     for (let i = 0; i < 8; i++) {
@@ -185,12 +185,12 @@
     }
   }
 
-  /* ─── Étape 0 : Intro → donne "Je" ─── */
+  /* Étape 0 : Intro → donne "Je" */
   function startGame() {
     completeStep(0);
   }
 
-  /* ─── Étape 1 : Question date → donne "t'" ─── */
+  /*  Étape 1 : Question date → donne "t'" */
   function checkDate() {
     const input = document.getElementById('dateInput');
     const error = document.getElementById('dateError');
@@ -220,7 +220,7 @@
     }
   });
 
-  /* ─── Étape 2 : Étoiles → donne "aime" ─── */
+  /* Étape 2 : Étoiles → donne "aime"  */
   function clickStar(btn) {
     btn.classList.add('star-clicked');
     btn.disabled = true;
@@ -234,7 +234,7 @@
     }
   }
 
-  /* ─── RÉVÉLATION FINALE ─── */
+  /* RÉVÉLATION FINALE */
   function triggerReveal() {
     stage.style.display = 'none';
     fragmentsDisplay.style.display = 'none';

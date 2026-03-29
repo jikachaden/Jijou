@@ -94,7 +94,7 @@ if (cdDays) {
   // Format : année, mois (0-indexé!), jour, heure, minute
   // Mois : 0=Jan, 1=Fev, 2=Mars, 3=Avril...
   // ════════════════════════════════════════════
-  const TARGET_DATE = new Date(2026, 2, 28, 0, 0, 0); // 28 mars 2026
+  const TARGET_DATE = new Date(2026, 3, 28, 0, 0, 0); // 28 avril 2026
 
   let prevValues = { d: '', h: '', m: '', s: '' };
 
@@ -116,7 +116,7 @@ if (cdDays) {
       cdMins.textContent = '';
       cdSecs.textContent = '';
       const label = document.querySelector('.countdown-label');
-      if (label) label.textContent = '💕 Joyeux 3 mois !';
+      if (label) label.textContent = '💕 Joyeux 4 mois !';
       const sep = document.querySelectorAll('.countdown-sep');
       sep.forEach(s => s.style.display = 'none');
 
@@ -168,6 +168,29 @@ function launchCountdownConfetti() {
       container.appendChild(c);
       setTimeout(() => c.remove(), 6000);
     }, i * 70);
+  }
+}
+
+
+/* ─────────────────────────────────────
+   NOTIFICATION — Popup message
+   ───────────────────────────────────── */
+function openNotifPopup() {
+  const overlay = document.getElementById('notifOverlay');
+  if (overlay) {
+    overlay.classList.add('active');
+    // Masquer la notification après ouverture
+    const bubble = document.getElementById('notifBubble');
+    if (bubble) bubble.classList.add('notif-read');
+  }
+}
+
+function closeNotifPopup(e, forceClose) {
+  const overlay = document.getElementById('notifOverlay');
+  const popup = document.getElementById('notifPopup');
+  // Fermer si on clique en dehors ou sur le bouton X
+  if (forceClose || e.target === overlay) {
+    overlay.classList.remove('active');
   }
 }
 

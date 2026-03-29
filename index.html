@@ -31,6 +31,30 @@
     <!-- Coeurs flottants (générés en JS) -->
     <div class="hearts-container" id="heartsContainer"></div>
 
+    <!-- ─── Notification discrète ─── -->
+    <div class="notif-bubble" id="notifBubble" onclick="openNotifPopup()">
+      <div class="notif-ping"></div>
+      <div class="notif-icon">💌</div>
+      <span class="notif-text">Tu as une notification ma Jijou d'amour</span>
+    </div>
+
+    <!-- ─── Popup modale ─── -->
+    <div class="notif-overlay" id="notifOverlay" onclick="closeNotifPopup(event)">
+      <div class="notif-popup" id="notifPopup">
+        <button class="notif-close" onclick="closeNotifPopup(event, true)">✕</button>
+        <div class="notif-popup-icon">💌</div>
+        <div class="notif-popup-body">
+          <!-- ════════════════════════════════════
+               🎯 MODIFIER ICI
+               ════════════════════════════════════ -->
+          <p>Sbah el kheir zina diali</p>
+          <p>J'espère que tu as bien dormi je t'aime fort</p>
+          <p class="notif-ps">PS : ça fait officiellement 3 mois qu'on est ensemble 💕</p>
+        </div>
+        <div class="notif-popup-footer">— Ton amoureux ♡</div>
+      </div>
+    </div>
+
     <div class="hero-content">
 
       <!-- ─── Texte de bienvenue ─── -->
@@ -47,7 +71,7 @@
 
         <!-- Bulle countdown à gauche -->
         <div class="countdown-bubble" id="countdownBubble">
-          <div class="countdown-label">💕 Nos 3 mois dans</div>
+          <div class="countdown-label">💕 Nos 4 mois dans</div>
           <div class="countdown-timer" id="countdownTimer">
             <div class="countdown-unit">
               <span class="countdown-value" id="cdDays">--</span>
@@ -69,7 +93,7 @@
               <span class="countdown-suffix">s</span>
             </div>
           </div>
-          <div class="countdown-date">28 mars 2026 🎉</div>
+          <div class="countdown-date">28 avril 2026 🎉</div>
         </div>
 
         <!-- Image -->

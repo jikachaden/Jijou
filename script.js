@@ -18,7 +18,6 @@ if (track) {
   let current = 0;
   let autoplay;
 
-  // Génération des dots et pilules de navigation
   slides.forEach((_, i) => {
     const dot = document.createElement('button');
     dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');

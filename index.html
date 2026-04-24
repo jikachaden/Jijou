@@ -47,9 +47,9 @@
           <!-- ════════════════════════════════════
                🎯 MODIFIE TON MESSAGE ICI
                ════════════════════════════════════ -->
-          <p>Sbah el kheir zina diali</p>
-          <p>j'espère que tu as bien dormi je t'aime fort</p>
-          <p class="notif-ps">PS : ça fait officiellement 3 mois qu'on est ensemble 💕</p>
+          <p>Coucou mon amour la meilleure !</p>
+          <p>Il y'a de la nouveauté sur le site</p>
+          <p>Je t'aime très fort et ça fait bientôt 4 mois ensemble 💕</p>
         </div>
         <div class="notif-popup-footer">— Ton amoureux ♡</div>
       </div>
@@ -182,6 +182,18 @@
               </p>
             </div>
 
+            <div class="carousel-slide">
+              <a href="coloriage.html" class="slide-link">
+                <div class="slide-icon">🎨</div>
+                <h2 class="slide-title">Coloriage</h2>
+              </a>
+              <div class="slide-divider"></div>
+              <p class="slide-text">
+                Colorie Nymphali comme tu veux…<br>
+                ta version rien qu'à toi 💕
+              </p>
+            </div>
+
           </div>
         </div>
 
@@ -195,161 +207,5 @@
   </section>
 
   <script src="script.js"></script>
-
-  <!-- ════════════════════════════════════
-       ÉNIGME TIMER — Bloque le site
-       ════════════════════════════════════ -->
-
-  <!-- Écran énigme (bloque tout) -->
-  <div class="enigma-screen" id="enigmaScreen">
-    <div class="enigma-orbs">
-      <div class="orb orb-1"></div>
-      <div class="orb orb-2"></div>
-      <div class="orb orb-3"></div>
-    </div>
-
-    <div class="enigma-card">
-      <div class="enigma-timer-ring">
-        <svg class="enigma-ring-svg" viewBox="0 0 120 120">
-          <circle class="ring-bg" cx="60" cy="60" r="54" />
-          <circle class="ring-progress" id="ringProgress" cx="60" cy="60" r="54" />
-        </svg>
-        <div class="enigma-timer-text" id="enigmaTimer">10:00</div>
-      </div>
-
-      <div class="enigma-content">
-        <div class="enigma-icon">🔮</div>
-        <h2 class="enigma-title">Résous l'énigme pour entrer</h2>
-        <div class="enigma-divider"></div>
-        <p class="enigma-riddle">
-          « Qui est la meilleure ? »
-        </p>
-        <div class="enigma-input-zone">
-          <input type="text" class="enigma-input" id="enigmaInput" placeholder="Ta réponse…" autocomplete="off">
-          <button class="game-btn enigma-btn" id="enigmaBtn" onclick="checkEnigma()">Valider ✨</button>
-        </div>
-        <p class="enigma-error" id="enigmaError"></p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Écran GAME OVER -->
-  <div class="gameover-screen" id="gameoverScreen">
-    <div class="gameover-content">
-      <div class="gameover-skull">💀</div>
-      <h1 class="gameover-title">Game Over</h1>
-      <button class="gameover-btn" onclick="location.reload()">Recommencer</button>
-    </div>
-  </div>
-
-  <script>
-  /* ═══════════════════════════════════════════════════════
-     ÉNIGME TIMER — 10 minutes pour résoudre
-     ═══════════════════════════════════════════════════════ */
-
-  // ════════════════════════════════════════════
-  // 🎯 CONFIG
-  // ════════════════════════════════════════════
-  const ENIGMA_ANSWER = 'Jihane';  // Réponse acceptée
-  const ENIGMA_DURATION = 10 * 60;       // 10 minutes en secondes
-
-  const enigmaScreen = document.getElementById('enigmaScreen');
-  const gameoverScreen = document.getElementById('gameoverScreen');
-  const enigmaTimerEl = document.getElementById('enigmaTimer');
-  const enigmaInput = document.getElementById('enigmaInput');
-  const enigmaError = document.getElementById('enigmaError');
-  const ringProgress = document.getElementById('ringProgress');
-
-  let enigmaTimeLeft = ENIGMA_DURATION;
-  let enigmaInterval = null;
-  let enigmaSolved = false;
-
-  // Calcul du périmètre du cercle SVG
-  const RING_CIRCUMFERENCE = 2 * Math.PI * 54; // r=54
-  ringProgress.style.strokeDasharray = RING_CIRCUMFERENCE;
-  ringProgress.style.strokeDashoffset = 0;
-
-  /* ─── Démarrer le timer ─── */
-  function startEnigmaTimer() {
-    enigmaInterval = setInterval(() => {
-      if (enigmaSolved) return;
-
-      enigmaTimeLeft--;
-
-      // Mise à jour affichage
-      const mins = Math.floor(enigmaTimeLeft / 60);
-      const secs = enigmaTimeLeft % 60;
-      enigmaTimerEl.textContent = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
-
-      // Mise à jour anneau
-      const progress = 1 - (enigmaTimeLeft / ENIGMA_DURATION);
-      ringProgress.style.strokeDashoffset = RING_CIRCUMFERENCE * progress;
-
-      // Couleur d'urgence quand < 2 min
-      if (enigmaTimeLeft <= 120) {
-        ringProgress.classList.add('ring-urgent');
-        enigmaTimerEl.classList.add('timer-urgent');
-      }
-
-      // GAME OVER
-      if (enigmaTimeLeft <= 0) {
-        clearInterval(enigmaInterval);
-        triggerGameOver();
-      }
-    }, 1000);
-  }
-
-  /* ─── Vérifier la réponse ─── */
-  function checkEnigma() {
-    const val = enigmaInput.value.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    const answer = ENIGMA_ANSWER.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-
-    if (val === answer) {
-      // GAGNÉ !
-      enigmaSolved = true;
-      clearInterval(enigmaInterval);
-
-      enigmaInput.disabled = true;
-      enigmaInput.classList.add('input-success');
-      enigmaError.textContent = '';
-
-      // Animation de victoire sur l'écran enigme
-      enigmaScreen.classList.add('enigma-solved');
-
-      // Retirer l'écran après animation
-      setTimeout(() => {
-        enigmaScreen.classList.add('enigma-gone');
-      }, 1500);
-    } else {
-      enigmaError.textContent = 'Hmm… ce n\'est pas ça 💭';
-      enigmaError.classList.add('shake');
-      enigmaInput.classList.add('input-error');
-      setTimeout(() => {
-        enigmaError.classList.remove('shake');
-        enigmaInput.classList.remove('input-error');
-      }, 600);
-    }
-  }
-
-  /* ─── GAME OVER ─── */
-  function triggerGameOver() {
-    enigmaScreen.classList.add('enigma-gone');
-    setTimeout(() => {
-      document.body.classList.add('body-gameover');
-      gameoverScreen.classList.add('active');
-    }, 300);
-  }
-
-  /* ─── Validation avec Entrée ─── */
-  enigmaInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') checkEnigma();
-  });
-
-  /* ─── Auto-focus ─── */
-  setTimeout(() => enigmaInput.focus(), 800);
-
-  // Lancer le timer
-  startEnigmaTimer();
-  </script>
 </body>
 </html>

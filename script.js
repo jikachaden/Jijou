@@ -14,10 +14,11 @@ if (track) {
   const dotsContainer = document.getElementById('carouselDots');
   const pillsContainer = document.getElementById('carouselPills');
 
-  const slideNames = ['💕 Pour toi', '🌸 Moments', '💌 Secret', '🧠 Memory', '🔮 Capsule', '🎰 Cash'];
+  const slideNames = ['💕 Pour toi', '🌸 Moments', '💌 Secret', '🧠 Memory', '🔮 Capsule', '🎰 Cash', '🎨 Coloriage'];
   let current = 0;
   let autoplay;
 
+  // Génération des dots et pilules de navigation
   slides.forEach((_, i) => {
     const dot = document.createElement('button');
     dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');

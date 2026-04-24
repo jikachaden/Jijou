@@ -55,7 +55,7 @@
       <div class="cash-legend">
         <div class="legend-item">
           <span class="legend-hearts">❤️x3</span>
-          <span class="legend-text">Moelleux / Balisto / Fleur origami</span>
+          <span class="legend-text">Moelleux au chocolat</span>
         </div>
         <div class="legend-item">
           <span class="legend-hearts">❤️×5</span>
@@ -63,7 +63,7 @@
         </div>
         <div class="legend-item">
           <span class="legend-hearts">❤️×8</span>
-          <span class="legend-text">Sonny Angel</span>
+          <span class="legend-text">Livre Alice (Dystopie)</span>
         </div>
       </div>
 
@@ -119,14 +119,14 @@
   const TOTAL_CELLS = 20; // 5x4
 
   // Lots basic (tiré au hasard parmi les 3)
-  const LOTS_BASIC = ['🍫 Moelleux au chocolat', '🍫 Paquet de Balisto', '🌸 Fleur en origami'];
+  const LOTS_BASIC = ['🍫 Moelleux au chocolat'];
 
   // Probabilités SI le ticket est gagnant :
   // 65% basic, 25% moyen, 10% gros lot
   const LOT_TIERS = [
     { chance: 0.65, hearts: 3, getLabel: () => LOTS_BASIC[Math.floor(Math.random() * LOTS_BASIC.length)] },
     { chance: 0.25, hearts: 5, getLabel: () => '📖 Carnet de l\'apothicaire' },
-    { chance: 0.10, hearts: 8, getLabel: () => '👼 Sonny Angel' },
+    { chance: 0.10, hearts: 8, getLabel: () => '📚 Livre Alice (Dystopie)' },
   ];
 
   const TICKET_COUNT = 3;

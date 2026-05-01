@@ -19,6 +19,95 @@
 <body>
 
   <!-- ════════════════════════════════════
+       POPUP URGENTE 💕
+       ════════════════════════════════════ -->
+  <div class="urgent-overlay" id="urgentOverlay">
+    <div class="urgent-hearts-bg" id="urgentHearts"></div>
+    <div class="urgent-popup">
+      <div class="urgent-emoji">💖</div>
+      <p class="urgent-msg">T'es la meilleure<br>arrête de bouder la 🥺💕</p>
+      <button class="game-btn" onclick="document.getElementById('urgentOverlay').classList.add('urgent-gone')">OK je boude plus 💕</button>
+    </div>
+  </div>
+
+  <style>
+    .urgent-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255, 200, 217, 0.85);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      animation: urgentFadeIn 0.6s ease forwards;
+    }
+    @keyframes urgentFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .urgent-overlay.urgent-gone {
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.8s ease;
+    }
+    .urgent-hearts-bg {
+      position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+    }
+    .urgent-heart-float {
+      position: absolute; bottom: -40px;
+      font-size: 24px; opacity: 0.6;
+      animation: urgentFloat var(--dur) ease-in infinite;
+      animation-delay: var(--delay);
+    }
+    @keyframes urgentFloat {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0.6; }
+      100% { transform: translateY(-110vh) rotate(var(--rot)); opacity: 0; }
+    }
+    .urgent-popup {
+      position: relative; z-index: 2; text-align: center;
+      display: flex; flex-direction: column; align-items: center; gap: 20px;
+      padding: 44px 40px; max-width: 440px; width: 88%;
+      border-radius: 32px;
+      background: rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.65);
+      box-shadow: 0 24px 70px rgba(230, 109, 148, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      opacity: 0; transform: scale(0.8) translateY(20px);
+      animation: urgentPopIn 0.8s cubic-bezier(.22, 1, .36, 1) 0.3s forwards;
+    }
+    @keyframes urgentPopIn {
+      from { opacity: 0; transform: scale(0.8) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .urgent-emoji {
+      font-size: 64px;
+      animation: urgentPulse 1.2s ease-in-out infinite;
+    }
+    @keyframes urgentPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+    .urgent-msg {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(26px, 5.5vw, 38px);
+      font-weight: 500; font-style: italic;
+      color: #5a2d3a; line-height: 1.4;
+    }
+  </style>
+
+  <script>
+    // Générer les cœurs flottants dans le fond
+    (function() {
+      const box = document.getElementById('urgentHearts');
+      const hearts = ['💕', '💖', '💗', '♡', '❤️', '🩷', '💝', '🥺'];
+      for (let i = 0; i < 25; i++) {
+        const h = document.createElement('span');
+        h.className = 'urgent-heart-float';
+        h.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+        h.style.left = Math.random() * 100 + '%';
+        h.style.fontSize = (18 + Math.random() * 22) + 'px';
+        h.style.setProperty('--dur', (4 + Math.random() * 5) + 's');
+        h.style.setProperty('--delay', (Math.random() * 4) + 's');
+        h.style.setProperty('--rot', (Math.random() > 0.5 ? '' : '-') + (60 + Math.random() * 120) + 'deg');
+        box.appendChild(h);
+      }
+    })();
+  </script>
+
+  <!-- ════════════════════════════════════
        HERO SECTION
        ════════════════════════════════════ -->
   <section class="hero">
@@ -47,9 +136,9 @@
           <!-- ════════════════════════════════════
                🎯 MODIFIE TON MESSAGE ICI
                ════════════════════════════════════ -->
-          <p>Coucou mon amour la meilleure !</p>
-          <p>Il y'a de la nouveauté sur le site</p>
-          <p>Je t'aime très fort et ça fait bientôt 4 mois ensemble 💕</p>
+          <p>Sbah el kheir zina diali</p>
+          <p>j'espère que tu as bien dormi je t'aime fort</p>
+          <p class="notif-ps">PS : ça fait officiellement 3 mois qu'on est ensemble 💕</p>
         </div>
         <div class="notif-popup-footer">— Ton amoureux ♡</div>
       </div>

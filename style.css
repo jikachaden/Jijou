@@ -4119,8 +4119,8 @@ body {
 /* ─── Cinnamoroll — Positionnement gauche ─── */
 .moments-img-cinnamoroll {
   position: absolute;
-  left: 100%;
-  top: 58%;
+  left: -12%;
+  top: 30%;
   z-index: 3;
   pointer-events: none;
 }
@@ -4152,5 +4152,65 @@ body {
 
   .moments-img-cinnamoroll .image-showcase {
     width: clamp(100px, 20vw, 150px);
+  }
+}
+
+/* ─── Bannière capsule débloquée ─── */
+.capsule-unlocked-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 24px;
+  margin-bottom: 6px;
+  border-radius: 24px;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(212, 165, 116, 0.35);
+  box-shadow:
+    0 8px 30px rgba(230, 109, 148, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  transition: all 0.35s cubic-bezier(.22, 1, .36, 1);
+  opacity: 0;
+  animation: revealUp 0.9s cubic-bezier(.22, 1, .36, 1) 0.4s forwards;
+}
+
+.capsule-unlocked-banner:hover {
+  background: rgba(255, 255, 255, 0.65);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 36px rgba(230, 109, 148, 0.18);
+}
+
+.cub-icon {
+  font-size: 22px;
+  animation: gentleFloat 3.5s ease-in-out infinite;
+}
+
+.cub-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(12px, 2.2vw, 14px);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  background: linear-gradient(135deg, var(--rose-6), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.cub-arrow {
+  font-size: 15px;
+  color: var(--gold);
+  transition: transform 0.3s ease;
+}
+
+.capsule-unlocked-banner:hover .cub-arrow {
+  transform: translateX(4px);
+}
+
+@media (max-width: 600px) {
+  .capsule-unlocked-banner {
+    padding: 10px 18px;
+    gap: 9px;
   }
 }

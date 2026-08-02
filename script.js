@@ -94,7 +94,7 @@ if (cdDays) {
   // Format : année, mois (0-indexé!), jour, heure, minute
   // Mois : 0=Jan, 1=Fev, 2=Mars, 3=Avril...
   // ════════════════════════════════════════════
-  const TARGET_DATE = new Date(2026, 3, 28, 0, 0, 0); // 28 avril 2026
+  const TARGET_DATE = new Date(2026, 7, 28, 0, 0, 0); // 28 août 2026
 
   let prevValues = { d: '', h: '', m: '', s: '' };
 
@@ -116,7 +116,7 @@ if (cdDays) {
       cdMins.textContent = '';
       cdSecs.textContent = '';
       const label = document.querySelector('.countdown-label');
-      if (label) label.textContent = '💕 Joyeux 4 mois !';
+      if (label) label.textContent = '💕 Joyeux 8 mois !';
       const sep = document.querySelectorAll('.countdown-sep');
       sep.forEach(s => s.style.display = 'none');
 
